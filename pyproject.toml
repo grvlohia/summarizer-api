@@ -1,0 +1,73 @@
+[project]
+name = "summarizer-api"
+version = "0.1.0"
+description = "Use LLM models to summarize articles"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "alembic>=1.18.4",
+    "anthropic>=0.104.1",
+    "argon2-cffi>=25.1.0",
+    "asyncpg>=0.31.0",
+    "fastapi[standard]>=0.136.3",
+    "pydantic>=2.13.4",
+    "redis[hiredis]>=8.0.0",
+    "sqlalchemy>=2.0.50",
+    "structlog>=25.5.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.1.0",
+    "pre-commit>=4.6.0",
+    "pytest>=9.0.3",
+    "pytest-asyncio>=1.4.0",
+    "pytest-postgresql>=8.1.0",
+    "pytest-redis>=4.0.0",
+    "ruff>=0.15.14",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "UP",     # pyupgrade
+    "N",      # pep8-naming
+    "S",      # Bandit security checks
+    "A",      # Shadowing Python builtins (e.g. naming a var list)
+    "C4",     # flake8-comprehensions
+    "T20",    # Disallows print() statements
+    "RET",    # Return statement improvements
+    "SIM",    # flake8-simplify
+    "W"       # pycodestyle warnings
+]
+ignore = [
+    "E501",   # line too long (handled by formatter)
+    "S101",   # allow `assert` in tests
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["summarizer-api"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+plugins = ["pydantic.mypy"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+markers = [
+  "integration: hits real external services (skipped by default)",
+]
+addopts = "-ra -q --strict-markers -m 'not integration'"
+
+[tool.fastapi]
+entrypoint = "app.main:app"
